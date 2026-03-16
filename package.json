@@ -1,0 +1,19 @@
+{
+  "name": "chrome-extension-lookup-api",
+  "version": "1.0.0",
+  "main": "authors- JM.js",
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --fix .",
+    "format": "biome format .",
+    "format:fix": "biome format --fix ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.7",
+    "lefthook": "^2.1.4"
+  }
+}

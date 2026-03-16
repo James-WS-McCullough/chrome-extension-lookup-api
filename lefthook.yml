@@ -1,0 +1,17 @@
+pre-commit:
+  parallel: true
+  commands:
+    biome-check:
+      glob: "*.{ts,tsx,js,jsx,json}"
+      run: npx biome check --staged --no-errors-on-unmatched
+    biome-format:
+      glob: "*.{ts,tsx,js,jsx,json}"
+      run: npx biome format --staged --no-errors-on-unmatched
+
+pre-push:
+  parallel: true
+  commands:
+    typecheck:
+      run: cd local-api && npx tsc --noEmit
+    test:
+      run: cd local-api && npx vitest run

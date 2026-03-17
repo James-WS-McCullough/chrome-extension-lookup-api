@@ -10,6 +10,6 @@
     "jsx": "preserve",
     "jsxImportSource": "vue"
   },
-  "include": ["src/**/*.ts", "src/**/*.vue"],
-  "exclude": ["node_modules", "dist", "tests"]
+  "include": ["src/**/*.ts", "src/**/*.vue", "tests/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

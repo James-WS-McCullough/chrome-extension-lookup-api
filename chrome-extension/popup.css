@@ -33,6 +33,10 @@ h1 {
 }
 
 button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
   padding: 10px;
   font-family: inherit;
@@ -42,6 +46,10 @@ button {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+button .material-symbols-outlined {
+  font-size: 20px;
 }
 
 button:hover {
@@ -202,11 +210,38 @@ button[hidden] {
   text-align: center;
 }
 
-.unsupported {
-  font-size: 13px;
-  color: #a1a9b8;
+.info-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #262b37;
+  border: 1px solid #373e4d;
+  border-radius: 8px;
+  padding: 16px;
+  animation: zoom-fade-in 0.4s ease-out;
 }
 
-.unsupported a {
-  color: #3f83dc;
+.info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #1a2a3f;
+  color: #60a5fa;
+  font-size: 18px;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.info-message {
+  font-size: 13px;
+  color: #d8dce3;
+  line-height: 1.5;
+}
+
+.info-message a {
+  color: #60a5fa;
 }

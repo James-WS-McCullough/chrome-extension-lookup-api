@@ -33,6 +33,10 @@ export const showAuthorData = (
 };
 
 export const showUnsupportedPage = (container: HTMLElement): void => {
-  container.innerHTML =
-    '<p class="unsupported">Navigate to <a href="https://quotes.toscrape.com" target="_blank">quotes.toscrape.com</a> to use this extension.</p>';
+  container.innerHTML = `
+    <div class="info-card">
+      <p class="info-icon">i</p>
+      <p class="info-message">Navigate to <a href="https://quotes.toscrape.com" target="_blank">quotes.toscrape.com</a> to use this extension.</p>
+    </div>
+  `;
 };

@@ -5,14 +5,14 @@ import { showAuthorData, showError, showUnsupportedPage } from "./renderer";
 
 const container = document.getElementById("results") as HTMLElement;
 const button = document.getElementById("lookup-btn") as HTMLButtonElement;
-const buttonLabel = "Get Author Data";
+const buttonDefault = '<span class="material-symbols-outlined">person_search</span>Get Author Data';
 
 const setButtonLoading = (loading: boolean): void => {
   button.disabled = loading;
   if (loading) {
     button.innerHTML = '<span class="spinner"></span>';
   } else {
-    button.textContent = buttonLabel;
+    button.innerHTML = buttonDefault;
   }
 };
 

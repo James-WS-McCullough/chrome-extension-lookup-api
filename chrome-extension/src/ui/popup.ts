@@ -7,16 +7,16 @@ const container = document.getElementById("results") as HTMLElement;
 const button = document.getElementById("lookup-btn") as HTMLButtonElement;
 const buttonLabel = "Get Author Data";
 
-function setButtonLoading(loading: boolean): void {
+const setButtonLoading = (loading: boolean): void => {
   button.disabled = loading;
   if (loading) {
     button.innerHTML = '<span class="spinner"></span>';
   } else {
     button.textContent = buttonLabel;
   }
-}
+};
 
-function toUserMessage(error: unknown, authorName: string): string {
+const toUserMessage = (error: unknown, authorName: string): string => {
   if (!(error instanceof Error)) {
     return "An unexpected error occurred.";
   }
@@ -30,22 +30,9 @@ function toUserMessage(error: unknown, authorName: string): string {
   }
 
   return `Something went wrong: ${error.message}`;
-}
+};
 
-async function initialize(): Promise<void> {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const url = tab?.url ?? "";
-
-  if (!isQuotesPage(url)) {
-    showUnsupportedPage(container);
-    button.hidden = true;
-    return;
-  }
-
-  button.addEventListener("click", handleLookup);
-}
-
-async function handleLookup(): Promise<void> {
+const handleLookup = async (): Promise<void> => {
   container.innerHTML = "";
   button.hidden = false;
   setButtonLoading(true);
@@ -87,6 +74,19 @@ async function handleLookup(): Promise<void> {
     setButtonLoading(false);
     showError(container, toUserMessage(error, authorName));
   }
-}
+};
+
+const initialize = async (): Promise<void> => {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const url = tab?.url ?? "";
+
+  if (!isQuotesPage(url)) {
+    showUnsupportedPage(container);
+    button.hidden = true;
+    return;
+  }
+
+  button.addEventListener("click", handleLookup);
+};
 
 initialize();

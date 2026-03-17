@@ -14,7 +14,7 @@ export type AuthorData = {
   samplePayloads: { type: string; title: string; value: string | number }[];
 };
 
-export async function fetchAuthorData(authorName: string): Promise<AuthorData> {
+export const fetchAuthorData = async (authorName: string): Promise<AuthorData> => {
   const url = `http://localhost:3000/author-data?author=${encodeURIComponent(authorName)}`;
 
   const response = await fetch(url);
@@ -28,4 +28,4 @@ export async function fetchAuthorData(authorName: string): Promise<AuthorData> {
   }
 
   return response.json() as Promise<AuthorData>;
-}
+};

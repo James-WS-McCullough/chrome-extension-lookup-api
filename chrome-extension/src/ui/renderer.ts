@@ -1,20 +1,20 @@
 import type { AuthorData } from "../services/author-api";
 import { toTitleCase } from "../utils/title-case";
 
-export function showError(container: HTMLElement, message: string): void {
+export const showError = (container: HTMLElement, message: string): void => {
   container.innerHTML = `
     <div class="error-card">
       <p class="error-icon">!</p>
       <p class="error-message">${message}</p>
     </div>
   `;
-}
+};
 
-export function showAuthorData(
+export const showAuthorData = (
   container: HTMLElement,
   data: AuthorData,
   onRefresh: () => void,
-): void {
+): void => {
   container.innerHTML = `
     <div class="author-card">
       <h2>${toTitleCase(data.author)}</h2>
@@ -30,9 +30,9 @@ export function showAuthorData(
     </div>
   `;
   container.querySelector(".refresh-btn")?.addEventListener("click", onRefresh);
-}
+};
 
-export function showUnsupportedPage(container: HTMLElement): void {
+export const showUnsupportedPage = (container: HTMLElement): void => {
   container.innerHTML =
     '<p class="unsupported">Navigate to <a href="https://quotes.toscrape.com" target="_blank">quotes.toscrape.com</a> to use this extension.</p>';
-}
+};

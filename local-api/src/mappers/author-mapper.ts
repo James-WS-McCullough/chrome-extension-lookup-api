@@ -16,7 +16,7 @@ export type RawAuthorEntry = {
   samplePayloads: { type: string; title: string; value: string | number }[];
 };
 
-export function toAuthor(entry: RawAuthorEntry): Author {
+export const toAuthor = (entry: RawAuthorEntry): Author => {
   return {
     author: entry.author,
     profile: {
@@ -36,4 +36,4 @@ export function toAuthor(entry: RawAuthorEntry): Author {
       value: payload.value,
     })),
   };
-}
+};

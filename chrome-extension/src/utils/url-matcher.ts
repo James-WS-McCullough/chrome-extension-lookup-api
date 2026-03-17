@@ -1,3 +1,3 @@
-export function isQuotesPage(url: string): boolean {
+export const isQuotesPage = (url: string): boolean => {
   return url.startsWith("https://quotes.toscrape.com");
-}
+};

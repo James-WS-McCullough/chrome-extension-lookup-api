@@ -1,19 +1,54 @@
 import { describe, expect, it } from "vitest";
-import { InMemoryAuthorRepository } from "../../src/infrastructure/in-memory-author-repository.ts";
-import { FindAuthorUseCase } from "../../src/use-cases/find-author.ts";
+import type { Author } from "../../src/domain/author";
+import { InMemoryAuthorRepository } from "../../src/infrastructure/in-memory-author-repository";
+import { FindAuthorUseCase } from "../../src/use-cases/find-author";
 
-const TEST_AUTHORS = [
+const TEST_AUTHORS: Author[] = [
   {
-    name: "Albert Einstein",
-    category: "Science & Philosophy",
-    difficulty: "medium",
-    rateLimitPerMinute: 60,
+    author: "Albert Einstein",
+    profile: {
+      category: "Science & Philosophy",
+      personaTags: ["deep-thoughts", "thinking", "world"],
+      difficulty: "medium",
+    },
+    recommendedActions: [
+      "Highlight key assumptions before building automations",
+      "Prefer simple models first, then iterate",
+    ],
+    integrationHints: {
+      preferredAuth: "API key",
+      rateLimitPerMinute: 60,
+      notes: "Use caching for repeated lookups by author",
+    },
+    samplePayloads: [
+      { type: "insight", title: "Reduce complexity", value: "Start with a minimal viable flow." },
+      { type: "metric", title: "Clarity score", value: 92 },
+    ],
   },
   {
-    name: "j.k. rowling",
-    category: "Storytelling & Product UX",
-    difficulty: "easy",
-    rateLimitPerMinute: 30,
+    author: "j.k. rowling",
+    profile: {
+      category: "Storytelling & Product UX",
+      personaTags: ["choices", "abilities", "growth"],
+      difficulty: "easy",
+    },
+    recommendedActions: [
+      "Design the happy path first (then error states)",
+      "Make UI feedback obvious (loading, success, retry)",
+    ],
+    integrationHints: {
+      preferredAuth: "OAuth (mocked)",
+      rateLimitPerMinute: 30,
+      notes: "If auth is complex, stub it and document the intended approach",
+    },
+    samplePayloads: [
+      {
+        type: "insight",
+        title: "UX tip",
+        value: "Users trust fast feedback more than perfect visuals.",
+      },
+      { type: "metric", title: "Delight score", value: 84 },
+    ],
   },
 ];
 

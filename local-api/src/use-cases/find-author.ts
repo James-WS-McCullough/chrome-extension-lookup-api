@@ -1,5 +1,5 @@
-import type { Author } from "../domain/author.ts";
-import type { AuthorRepository } from "../repositories/author-repository.ts";
+import type { Author } from "../domain/author";
+import type { AuthorRepository } from "../repositories/author-repository";
 
 export class FindAuthorUseCase {
   private readonly authorRepository: AuthorRepository;

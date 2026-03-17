@@ -63,3 +63,5 @@ const AUTHOR_DATA = [
     ]
   }
 ];
+
+module.exports = AUTHOR_DATA;

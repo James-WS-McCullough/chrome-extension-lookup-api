@@ -10,16 +10,24 @@
 - Add scripts: `"dev": "tsx src/server.ts"`, `"test": "vitest run"`, `"test:watch": "vitest"`.
 
 ### Step 2 — Domain layer (`src/domain/author.ts`)
-Define the `Author` domain entity as a TypeScript type. This represents the clean, application-level shape — not the raw dataset shape.
+Define the `Author` domain entity as a TypeScript type. This mirrors the full raw dataset shape — the API returns the complete author object and the Chrome extension decides which fields to display.
 ```ts
 type Author = {
-  name: string;
-  category: string;
-  difficulty: string;
-  rateLimitPerMinute: number;
+  author: string;
+  profile: {
+    category: string;
+    personaTags: string[];
+    difficulty: string;
+  };
+  recommendedActions: string[];
+  integrationHints: {
+    preferredAuth: string;
+    rateLimitPerMinute: number;
+    notes: string;
+  };
+  samplePayloads: SamplePayload[];
 }
 ```
-This is the only data the API ultimately needs to serve. Keep the domain lean — only fields relevant to the business logic.
 
 ### Step 3 — Repository interface (`src/repositories/author-repository.ts`)
 Define the contract. No implementation.
@@ -31,24 +39,12 @@ interface AuthorRepository {
 Single method. Case-insensitive matching is the repository's responsibility since it owns data access.
 
 ### Step 4 — Mappers (`src/mappers/author-mapper.ts`)
-Two mapper functions:
-
-**`toAuthor`** — converts a raw dataset entry into the domain `Author` type:
-- Maps `entry.author` → `name`
-- Maps `entry.profile.category` → `category`
-- Maps `entry.profile.difficulty` → `difficulty`
-- Maps `entry.integrationHints.rateLimitPerMinute` → `rateLimitPerMinute`
-- Discards all other fields (`personaTags`, `recommendedActions`, `samplePayloads`, etc.)
-
-**`toAuthorResponse`** — converts domain `Author` to the API response DTO:
-- Returns only `{ category, difficulty, rateLimitPerMinute }` (excludes `name` since the caller already knows it).
-
-Also define the raw data type (`RawAuthorEntry`) to type the imported dataset.
+**`toAuthor`** — casts a raw dataset entry to the domain `Author` type. Since the domain mirrors the dataset shape, this is a type-level assertion only.
 
 ### Step 5 — Infrastructure: `FileAuthorRepository` (`src/infrastructure/file-author-repository.ts`)
 - Imports the raw dataset from `../../authors- JM.js` (using `createRequire` or a typed import).
 - On construction, maps all raw entries to domain `Author` objects using `toAuthor`.
-- `findByName(name)`: compares `name.toLowerCase().trim()` against stored `author.name.toLowerCase()`. Returns first match or `undefined`.
+- `findByName(name)`: compares `name.toLowerCase().trim()` against stored `entry.author.toLowerCase()`. Returns first match or `undefined`.
 
 ### Step 6 — Infrastructure: `InMemoryAuthorRepository` (`src/infrastructure/in-memory-author-repository.ts`)
 - Constructor accepts `Author[]`.
@@ -73,7 +69,7 @@ Pure orchestration. Takes a repository via constructor injection. Returns domain
   1. Read `req.query.author`. If missing/empty → `400 { error: "Missing author query parameter" }`.
   2. Call `findAuthorUseCase.execute(author)`.
   3. If `undefined` → `404 { error: "Author not found" }`.
-  4. Otherwise → `200` with `toAuthorResponse(author)` (only `category`, `difficulty`, `rateLimitPerMinute`).
+  4. Otherwise → `200` with the full author object.
 
 ### Step 9 — Composition root (`src/server.ts`)
 - Import `FileAuthorRepository`, `FindAuthorUseCase`, `AuthorController`.
@@ -96,11 +92,11 @@ Pure orchestration. Takes a repository via constructor injection. Returns domain
 - Import the `app` from `server.ts` (or create a test server helper).
 - Use `fetch` or `supertest` to make real HTTP requests.
 - Test cases:
-  - `GET /author-data?author=Albert Einstein` → `200` with `{ category, difficulty, rateLimitPerMinute }`.
+  - `GET /author-data?author=Albert Einstein` → `200` with full author object.
   - `GET /author-data?author=j.k. rowling` → `200` (case-insensitive dataset match).
   - `GET /author-data?author=unknown` → `404` with `{ error: "Author not found" }`.
   - `GET /author-data` (no query param) → `400` with `{ error: "Missing author query parameter" }`.
-  - Response body contains exactly 3 keys — no extra fields leaked.
+  - Response body contains the complete author object structure (`author`, `profile`, `recommendedActions`, `integrationHints`, `samplePayloads`).
 
 ---
 
@@ -143,9 +139,19 @@ Note: This function cannot import other modules since it executes in the page's 
 ### Step 4 — API service (`src/services/author-api.ts`)
 ```ts
 type AuthorData = {
-  category: string;
-  difficulty: string;
-  rateLimitPerMinute: number;
+  author: string;
+  profile: {
+    category: string;
+    personaTags: string[];
+    difficulty: string;
+  };
+  recommendedActions: string[];
+  integrationHints: {
+    preferredAuth: string;
+    rateLimitPerMinute: number;
+    notes: string;
+  };
+  samplePayloads: { type: string; title: string; value: string | number }[];
 }
 
 async function fetchAuthorData(authorName: string): Promise<AuthorData>
@@ -165,7 +171,7 @@ function showUnsupportedPage(container: HTMLElement): void
 ```
 - `showLoading` — displays a spinner or "Loading..." text.
 - `showError` — displays the error message with a retry-friendly message.
-- `showAuthorData` — renders `category`, `difficulty`, and `rateLimitPerMinute` in a clean layout.
+- `showAuthorData` — receives the full author object but renders only `category`, `difficulty`, and `rateLimitPerMinute`.
 - `showUnsupportedPage` — displays the message directing users to quotes.toscrape.com.
 
 ### Step 6 — Popup orchestrator (`src/ui/popup.ts`)

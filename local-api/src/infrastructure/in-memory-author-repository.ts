@@ -1,5 +1,5 @@
-import type { Author } from "../domain/author.ts";
-import type { AuthorRepository } from "../repositories/author-repository.ts";
+import type { Author } from "../domain/author";
+import type { AuthorRepository } from "../repositories/author-repository";
 
 export class InMemoryAuthorRepository implements AuthorRepository {
   private readonly authors: Author[];
@@ -9,7 +9,7 @@ export class InMemoryAuthorRepository implements AuthorRepository {
   }
 
   findByName(name: string): Author | undefined {
-    const normalizedName = name.toLowerCase().trim();
-    return this.authors.find((author) => author.name.toLowerCase() === normalizedName);
+    const normalized = name.toLowerCase().trim();
+    return this.authors.find((entry) => entry.author.toLowerCase() === normalized);
   }
 }

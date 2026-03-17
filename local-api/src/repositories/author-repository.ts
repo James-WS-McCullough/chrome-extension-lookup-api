@@ -1,4 +1,4 @@
-import type { Author } from "../domain/author.ts";
+import type { Author } from "../domain/author";
 
 export interface AuthorRepository {
   findByName(name: string): Author | undefined;

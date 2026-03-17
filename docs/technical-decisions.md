@@ -85,3 +85,119 @@ This document captures the reasoning behind key technical decisions in the proje
 **Counterpoint:** For a single endpoint with one query parameter, a simple `if (!req.query.author)` check is fewer lines and introduces no dependency. Zod adds a runtime library to the bundle. Manual checks may be more appropriate when validation logic is trivial and unlikely to be reused.
 
 ---
+
+## Chrome Extension
+
+### Vanilla CSS
+
+**Decision:** Write all popup styles in plain CSS with no framework, using a dark theme with custom colour ladders (blue and cool grey).
+
+**Reasoning:** Vanilla CSS keeps the extension lightweight with no build tooling overhead. The popup has a small, fixed layout with few states, making a CSS framework unnecessary.
+
+**Counterpoint:** For a larger extension UI with many components, Tailwind would enforce design consistency and speed up development. It would also make the colour token system (the blue and grey ladders) easier to manage via `tailwind.config`. For this scope, vanilla CSS is sufficient.
+
+---
+
+### Direct DOM Manipulation (No UI Framework)
+
+**Decision:** Manage the popup UI with direct `innerHTML` assignments and event listeners, without a framework like React or Vue.
+
+**Reasoning:** The popup has minimal state (button, loading, result, error, unsupported) and a fixed layout. Direct DOM manipulation keeps the bundle small and avoids framework overhead for a handful of view transitions.
+
+**Counterpoint:** If the extension UI grows in complexity (settings, tabs, search history), a lightweight framework like Vue would provide reactive state management and component structure that scales better than manual `innerHTML` assignments. For this scope, the added dependency and build complexity aren't justified.
+
+---
+
+### Frontend-Side Field Filtering
+
+**Decision:** The API returns the full author object. The Chrome extension selects which fields to display (category, difficulty, rate limit per minute).
+
+**Reasoning:** This was specified in the project requirements. The spec explicitly requested that filtering happens on the frontend side.
+
+**Counterpoint:** In a typical production setup, filtering would happen on the backend — either at the controller level by mapping to a response DTO, or at the domain entity level if certain fields aren't needed at all. Returning only the relevant fields reduces payload size, limits data exposure, and keeps the frontend from needing to know the full data shape. Backend filtering is generally the preferred approach unless the API is designed to serve multiple consumers with different display needs.
+
+---
+
+### esbuild for Bundling
+
+**Decision:** Use esbuild to bundle the extension's TypeScript into a single output file, with no configuration file.
+
+**Reasoning:** esbuild is fast and requires no configuration for this use case. A single command bundles the TypeScript entry point into one output file, with no config file needed.
+
+**Counterpoint:** Webpack offers more control (code splitting, asset management, plugins) for complex builds. Vite would be the natural choice if the extension adopted a framework like Vue, since it provides hot module replacement and uses esbuild internally. For a single-file bundle, esbuild's simplicity is an advantage.
+
+---
+
+## Project Standards
+
+### Lefthook for Git Hooks
+
+**Decision:** Use Lefthook to run Biome checks on pre-commit (linting and formatting staged files) and TypeScript type-checking plus tests on pre-push.
+
+**Reasoning:** Git hooks keep the repository clean and well-formatted by catching issues before they're committed or pushed. Lefthook has worked well alongside Biome, with a simple YAML configuration and parallel hook execution.
+
+**Counterpoint:** Husky is more widely adopted and would work just as well. There isn't a significant difference between the two for this use case. The choice is largely a matter of preference and prior experience.
+
+---
+
+### No Code Comments
+
+**Decision:** Do not write comments in code. Rely on intention-revealing names for functions, variables, and files. If logic requires a comment to be understood, extract it into a named function instead.
+
+**Reasoning:** Comments, if not updated alongside the code, can become more misleading than helpful. Using clear names to explain the code means there are no legacy comments that contradict what the code actually does. If something is complex enough to need a comment, extracting it as a separately named function makes the intent self-evident and keeps the explanation tied to the code itself.
+
+**Counterpoint:** Some logic genuinely benefits from explaining *why* rather than *what* — business rules, workarounds for third-party quirks, or non-obvious performance decisions. In those cases, a well-placed comment can save the next developer significant time. The risk of stale comments can also be mitigated through code review discipline rather than a blanket ban.
+
+---
+
+## Testing
+
+### Supertest for E2E Tests
+
+**Decision:** Use Supertest to make HTTP requests against the Express app in E2E tests, without starting a server.
+
+**Reasoning:** Supertest makes writing test cases easy with a fluent API and clearer assertions than raw fetch. It also removes the need to manage a running server during tests — it handles the lifecycle internally.
+
+**Counterpoint:** Playwright or other HTTP testing tools would work equally well. For tests that need to verify behaviour across a real network boundary (e.g. testing CORS, timeouts, or load balancers), a real running server with fetch or an HTTP client would be more representative of production conditions.
+
+---
+
+### Separate `app.ts` and `server.ts`
+
+**Decision:** Split the composition root (`app.ts`, which wires dependencies and routes) from the server listener (`server.ts`, which calls `app.listen()`).
+
+**Reasoning:** If the server starts listening on a port when imported, it will conflict with a pre-existing running instance during testing. By separating the responsibilities, E2E tests can import the app and pass it to Supertest without starting a real server, avoiding port conflicts and keeping tests isolated.
+
+**Counterpoint:** For projects that don't need E2E tests against the app object, or where tests spin up the server on a random port, a single file is simpler and avoids the extra indirection.
+
+---
+
+### In-Memory Dataset (No Database)
+
+**Decision:** Load author data from a hardcoded JavaScript file into memory at startup, rather than connecting to a database.
+
+**Reasoning:** This was part of the project specification. The dataset is small and static, so an in-memory lookup is sufficient.
+
+**Counterpoint:** In a real project, a database with an ORM like Prisma would provide type-safe, efficient data access with support for querying, migrations, and scaling. The hexagonal architecture already accommodates this — the `FileAuthorRepository` could be replaced with a database-backed implementation without changing any other layer.
+
+---
+
+### Hardcoded localhost:3000 (No Environment Config)
+
+**Decision:** Hardcode the server port and API base URL throughout the project, with no `.env` files or environment variable system.
+
+**Reasoning:** This is a pet project that will only ever be run locally against localhost. Adding environment configuration would be unnecessary overhead for something that doesn't need to run in multiple environments.
+
+**Counterpoint:** For a real API, separate environments (local, dev, UAT, production) would each need their own configuration. Environment variables stored in `.env` files, loaded via a tool like `dotenv`, would allow the same codebase to run across environments without code changes. Hardcoded values would need to be updated manually for each deployment.
+
+---
+
+### Multi-Package Structure
+
+**Decision:** Use three `package.json` files — one each for `local-api/` and `chrome-extension/`, plus a root-level one. The root provides shared tooling (Biome, Lefthook) and delegation scripts (`api:dev`, `api:test`, `ext:build`, `ext:test`) for convenience.
+
+**Reasoning:** The API and the Chrome extension are separate concerns with different dependencies, so they deserve their own `package.json`. The root level serves a different purpose — it handles cross-project tooling (linting, formatting, git hooks) and provides ease-of-use commands to interact with the other layers without having to `cd` into each directory.
+
+**Counterpoint:** For larger multi-package projects, a monorepo tool like Nx or Turborepo would add dependency graph awareness, caching, and parallel task execution. For two packages with no shared code, the overhead of a monorepo tool isn't justified. Conversely, if the projects were truly independent with no shared tooling, separate repositories would provide cleaner isolation.
+
+---

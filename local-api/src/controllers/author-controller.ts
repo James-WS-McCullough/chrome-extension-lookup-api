@@ -13,7 +13,8 @@ export class AuthorController {
     this.findAuthorUseCase = findAuthorUseCase;
   }
 
-  handle = (req: Request, res: Response): void => {
+  handle = async (req: Request, res: Response): Promise<void> => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     const result = authorQuerySchema.safeParse(req.query);
 
     if (!result.success) {

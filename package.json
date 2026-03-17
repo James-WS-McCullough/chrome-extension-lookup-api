@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "main": "authors- JM.js",
   "scripts": {
+    "api:dev": "npm --prefix local-api run dev",
+    "api:test": "npm --prefix local-api test",
+    "ext:build": "npm --prefix chrome-extension run build",
+    "ext:test": "npm --prefix chrome-extension test",
+    "test": "npm run api:test && npm run ext:test",
     "lint": "biome check .",
     "lint:fix": "biome check --fix .",
     "format": "biome format .",

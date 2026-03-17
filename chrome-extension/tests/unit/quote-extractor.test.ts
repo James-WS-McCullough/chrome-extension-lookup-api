@@ -4,9 +4,13 @@ import { extractFirstAuthor } from "../../src/extractors/quote-extractor";
 describe("extractFirstAuthor", () => {
   beforeEach(() => {
     document.body.innerHTML = "";
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/" },
+      writable: true,
+    });
   });
 
-  it("extracts the first author from the page", () => {
+  it("extracts the first author from the quotes page", () => {
     document.body.innerHTML = `
       <div class="quote">
         <span class="text">"The world is a book."</span>
@@ -19,6 +23,22 @@ describe("extractFirstAuthor", () => {
     `;
 
     expect(extractFirstAuthor()).toBe("Albert Einstein");
+  });
+
+  it("extracts author from an author detail page", () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/author/J-K-Rowling/" },
+      writable: true,
+    });
+
+    document.body.innerHTML = `
+      <div class="author-details">
+        <h3 class="author-title">J.K. Rowling</h3>
+        <p><strong>Born:</strong> <span class="author-born-date">July 31, 1965</span></p>
+      </div>
+    `;
+
+    expect(extractFirstAuthor()).toBe("J.K. Rowling");
   });
 
   it("returns null when no author element exists", () => {

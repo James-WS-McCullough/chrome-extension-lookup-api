@@ -146,7 +146,7 @@ This document captures the reasoning behind key technical decisions in the proje
 
 **Reasoning:** Comments, if not updated alongside the code, can become more misleading than helpful. Using clear names to explain the code means there are no legacy comments that contradict what the code actually does. If something is complex enough to need a comment, extracting it as a separately named function makes the intent self-evident and keeps the explanation tied to the code itself.
 
-**Counterpoint:** Some logic genuinely benefits from explaining *why* rather than *what* — business rules, workarounds for third-party quirks, or non-obvious performance decisions. In those cases, a well-placed comment can save the next developer significant time. The risk of stale comments can also be mitigated through code review discipline rather than a blanket ban.
+**Counterpoint:** Some logic genuinely benefits from explaining _why_ rather than _what_ — business rules, workarounds for third-party quirks, or non-obvious performance decisions. In those cases, a well-placed comment can save the next developer significant time. The risk of stale comments can also be mitigated through code review discipline rather than a blanket ban.
 
 ---
 
@@ -158,7 +158,7 @@ This document captures the reasoning behind key technical decisions in the proje
 
 **Reasoning:** Supertest makes writing test cases easy with a fluent API and clearer assertions than raw fetch. It also removes the need to manage a running server during tests — it handles the lifecycle internally.
 
-**Counterpoint:** Playwright or other HTTP testing tools would work equally well. For tests that need to verify behaviour across a real network boundary (e.g. testing CORS, timeouts, or load balancers), a real running server with fetch or an HTTP client would be more representative of production conditions.
+**Counterpoint:** Playwright or other HTTP testing tools would work equally well. For tests that need to verify behaviour across a real network boundary (e.g. testing CORS, timeouts, or load balancers), a real running server with fetch or an HTTP client would be more representative of production conditions. You could also ensure a freshly seeded database schema for each test to allow for realistic but easily reproducable conditions.
 
 ---
 

@@ -6,8 +6,10 @@
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.vue"],
   "exclude": ["node_modules", "dist", "tests"]
 }

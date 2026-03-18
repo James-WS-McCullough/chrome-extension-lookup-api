@@ -182,13 +182,13 @@ This document captures the reasoning behind key technical decisions in the proje
 
 ---
 
-### Hardcoded localhost:3000 (No Environment Config)
+### Environment Variables for Configuration
 
-**Decision:** Hardcode the server port and API base URL throughout the project, with no `.env` files or environment variable system.
+**Decision:** Use `.env` files to configure the server port (`PORT`) and the API base URL (`VITE_API_BASE_URL`), rather than hardcoding values. The backend reads `PORT` from `process.env` at runtime. The Chrome extension uses Vite's `import.meta.env` to inline `VITE_API_BASE_URL` at build time, since extensions run in the browser and have no access to `process.env`.
 
-**Reasoning:** This is a pet project that will only ever be run locally against localhost. Adding environment configuration would be unnecessary overhead for something that doesn't need to run in multiple environments.
+**Reasoning:** Even though this project only runs locally, using environment variables demonstrates the standard approach for separating configuration from code. It also means changing the port or API URL requires editing a single `.env` file rather than searching through source files.
 
-**Counterpoint:** For a real API, separate environments (local, dev, UAT, production) would each need their own configuration. Environment variables stored in `.env` files, loaded via a tool like `dotenv`, would allow the same codebase to run across environments without code changes. Hardcoded values would need to be updated manually for each deployment.
+**Counterpoint:** For a project that will genuinely never leave localhost, `.env` files add a layer of indirection. A new developer must check the `.env` file to understand what URL the extension is hitting, whereas a hardcoded value is immediately visible in the source. The build-time inlining also means the value is still a static string in the output — it just lives in a different place.
 
 ---
 

@@ -15,7 +15,7 @@ export type AuthorData = {
 };
 
 export const fetchAuthorData = async (authorName: string): Promise<AuthorData> => {
-  const url = `http://localhost:3000/author-data?author=${encodeURIComponent(authorName)}`;
+  const url = `${import.meta.env.VITE_API_BASE_URL}/author-data?author=${encodeURIComponent(authorName)}`;
 
   const response = await fetch(url);
 

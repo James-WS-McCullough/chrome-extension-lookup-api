@@ -17,6 +17,10 @@ cd local-api && npm install
 cd ../chrome-extension && npm install
 ```
 
+## Environment Variables
+
+Both `local-api/.env` and `chrome-extension/.env` are committed to this repository for convenience. In a real project, `.env` files should be added to `.gitignore` and never committed, as they typically contain secrets or environment-specific configuration. Since this project is designed to run only on localhost with no sensitive values, they are included so the project works out of the box without additional setup.
+
 ## Running the API
 
 Start the local API server on port 3000:

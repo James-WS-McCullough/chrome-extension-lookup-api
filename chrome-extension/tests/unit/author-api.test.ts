@@ -42,7 +42,7 @@ describe("fetchAuthorData", () => {
     const result = await fetchAuthorData("Albert Einstein");
     expect(result).toEqual(mockAuthorResponse);
     expect(fetch).toHaveBeenCalledWith(
-      "http://localhost:3000/author-data?author=Albert%20Einstein",
+      `${import.meta.env.VITE_API_BASE_URL}/author-data?author=Albert%20Einstein`,
     );
   });
 

@@ -8,6 +8,7 @@ import LookupButton from "./components/atoms/LookupButton.vue";
 import { extractFirstAuthor } from "./extractors/quote-extractor";
 import { fetchAuthorData } from "./services/author-api";
 import type { AuthorData } from "./services/author-api";
+import { getActiveTab } from "./utils/active-tab";
 import { toUserMessage } from "./utils/error-message";
 import { isQuotesPage } from "./utils/url-matcher";
 
@@ -23,7 +24,7 @@ const handleLookup = async (): Promise<void> => {
   status.value = "loading";
   buttonVisible.value = true;
 
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const tab = await getActiveTab();
 
   if (!tab?.id) {
     status.value = "error";
@@ -62,7 +63,7 @@ const onButtonLeave = (): void => {
 };
 
 onMounted(async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const tab = await getActiveTab();
   const url = tab?.url ?? "";
 
   if (!isQuotesPage(url)) {

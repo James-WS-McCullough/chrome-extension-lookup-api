@@ -6,9 +6,11 @@
     "dev": "vite build --watch",
     "build": "vue-tsc --noEmit && vite build",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/chrome": "^0.0.287",
     "@vitejs/plugin-vue": "^5.2.4",
     "@vue/test-utils": "^2.4.6",

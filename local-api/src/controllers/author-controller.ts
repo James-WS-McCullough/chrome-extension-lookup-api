@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
-import type { FindAuthorUseCase } from "../use-cases/find-author";
+import type { FindAuthorUseCase } from "@/use-cases/find-author";
 
 const authorQuerySchema = z.object({
   author: z.string().min(1),

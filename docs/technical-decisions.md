@@ -98,13 +98,13 @@ This document captures the reasoning behind key technical decisions in the proje
 
 ---
 
-### Direct DOM Manipulation (No UI Framework)
+### Vue.js with Atomic Design
 
-**Decision:** Manage the popup UI with direct `innerHTML` assignments and event listeners, without a framework like React or Vue.
+**Decision:** Use Vue.js to build the popup UI, organised using atomic design (atoms, molecules, organisms).
 
-**Reasoning:** The popup has minimal state (button, loading, result, error, unsupported) and a fixed layout. Direct DOM manipulation keeps the bundle small and avoids framework overhead for a handful of view transitions.
+**Reasoning:** The initial prototype used direct DOM manipulation to get something working quickly, but was then refactored to Vue.js for a cleaner frontend developer experience. Vue's component model enabled atomic design, which makes future additions to the extension straightforward — new UI features can be composed from existing atoms and molecules without touching unrelated code.
 
-**Counterpoint:** If the extension UI grows in complexity (settings, tabs, search history), a lightweight framework like Vue would provide reactive state management and component structure that scales better than manual `innerHTML` assignments. For this scope, the added dependency and build complexity aren't justified.
+**Counterpoint:** Vue adds a runtime dependency and increases the bundle size compared to vanilla DOM manipulation. For an extension popup that will never grow beyond a few states, the framework overhead may not pay for itself. React or Svelte would offer similar component-based benefits — Vue's advantage here is primarily familiarity and its lightweight single-file component model, not a clear technical differentiator.
 
 ---
 
@@ -118,13 +118,13 @@ This document captures the reasoning behind key technical decisions in the proje
 
 ---
 
-### esbuild for Bundling
+### Vite for Bundling
 
-**Decision:** Use esbuild to bundle the extension's TypeScript into a single output file, with no configuration file.
+**Decision:** Use Vite to bundle the Chrome extension's Vue.js frontend.
 
-**Reasoning:** esbuild is fast and requires no configuration for this use case. A single command bundles the TypeScript entry point into one output file, with no config file needed.
+**Reasoning:** Once the extension moved to Vue.js, Vite was the natural choice. It is built by the same team as Vue, has first-class support via `@vitejs/plugin-vue`, and provides hot module replacement, fast builds, and a plugin ecosystem that integrates cleanly with the Vue toolchain.
 
-**Counterpoint:** Webpack offers more control (code splitting, asset management, plugins) for complex builds. Vite would be the natural choice if the extension adopted a framework like Vue, since it provides hot module replacement and uses esbuild internally. For a single-file bundle, esbuild's simplicity is an advantage.
+**Counterpoint:** Webpack offers more granular control over the build pipeline (code splitting, asset management, loader chains) and has wider adoption in Chrome extension projects with established community templates. For a simple popup with a single entry point, Vite's dev server and HMR capabilities go largely unused — the extension is built once and loaded statically. esbuild alone would produce a smaller, faster build if Vue were not in the picture.
 
 ---
 

@@ -1,8 +1,8 @@
 import { createRequire } from "node:module";
-import type { Author } from "../domain/author";
-import type { RawAuthorEntry } from "../mappers/author-mapper";
-import { toAuthor } from "../mappers/author-mapper";
-import type { AuthorRepository } from "../repositories/author-repository";
+import type { Author } from "@/domain/author";
+import type { RawAuthorEntry } from "@/mappers/author-mapper";
+import { toAuthor } from "@/mappers/author-mapper";
+import type { AuthorRepository } from "@/repositories/author-repository";
 
 const require = createRequire(import.meta.url);
 

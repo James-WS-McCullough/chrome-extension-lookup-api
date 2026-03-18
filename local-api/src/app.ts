@@ -1,7 +1,7 @@
 import cors from "cors";
 import express from "express";
-import { AuthorController } from "./controllers/author-controller";
-import { findAuthorUseCase } from "./factories/find-author-use-case";
+import { AuthorController } from "@/controllers/author-controller";
+import { findAuthorUseCase } from "@/factories/find-author-use-case";
 
 const authorController = new AuthorController(findAuthorUseCase);
 

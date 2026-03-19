@@ -10,15 +10,15 @@ The innermost layer. Contains pure types and entities with zero imports from oth
 
 - `author.ts` — Defines the `Author` and `SamplePayload` types
 
-### Repositories / Ports (`src/repositories/`)
+### Repositories / Ports (`src/domain/repositories/`)
 
-Defines the **interface** (contract) for data access. No implementation — just the types and function definitions that will be implimented in the infrastructure layer.
+Defines the **interface** (contract) for data access. No implementation — just the types and function definitions that will be implemented in the infrastructure layer.
 
 - `AuthorRepository` — A single method: `findByName(name: string): Author | undefined`
 
 Use cases depend on this interface, not on any concrete implementation. This is what makes the architecture swappable.
 
-### Use Cases (`src/use-cases/`)
+### Use Cases (`src/application/use-cases/`)
 
 Application-level business logic. Each use case receives a repository interface via constructor injection and orchestrates a single operation.
 
@@ -26,26 +26,26 @@ Application-level business logic. Each use case receives a repository interface 
 
 Use cases never import concrete implementations. They only know about the domain and the repository interface.
 
-### Controllers (`src/controllers/`)
+### Controllers (`src/infrastructure/controllers/`)
 
 The inbound adapter. Translates HTTP requests into use case calls and use case results into HTTP responses.
 
 - `AuthorController` — Validates the query parameter (via Zod), calls `FindAuthorUseCase`, and returns the appropriate status code and JSON response (200, 400, or 404)
 
-### Factories (`src/factories/`)
+### Factories (`src/infrastructure/factories/`)
 
 Handles constructing use cases and their dependencies. This keeps the composition root thin — `app.ts` only needs to import from factories and controllers.
 
 - `find-author-use-case.ts` — Instantiates `FileAuthorRepository` and injects it into `FindAuthorUseCase`
 
-### Infrastructure (`src/infrastructure/`)
+### Repositories (`src/infrastructure/repositories/`)
 
 Concrete implementations of the repository interface. This is the only layer that knows about specific data sources.
 
 - `FileAuthorRepository` — Loads data from `authors- JM.js` using `createRequire`, maps it to domain types via the mapper. Used in production.
 - `InMemoryAuthorRepository` — Holds authors in a plain array, accepting them via constructor. Used in unit tests as a controllable stub.
 
-### Mappers (`src/mappers/`)
+### Mappers (`src/infrastructure/mappers/`)
 
 Pure functions that convert between raw data formats and domain entities. Acts as a boundary — if the data source shape changes, only the mapper needs updating.
 
@@ -76,21 +76,25 @@ Dependencies flow inward only. No layer may import from a layer above it.
 
 ```
 src/
-├── app.ts                          # Composition root
-├── server.ts                       # HTTP listener
+├── app.ts                                        # Composition root
+├── server.ts                                     # HTTP listener
+├── env.ts                                        # Environment variable parsing
 ├── domain/
-│   └── author.ts                   # Author entity type
-├── repositories/
-│   └── author-repository.ts        # Repository interface
-├── use-cases/
-│   └── find-author.ts              # FindAuthorUseCase
-├── controllers/
-│   └── author-controller.ts        # HTTP handler
-├── factories/
-│   └── find-author-use-case.ts     # Use case factory
-├── infrastructure/
-│   ├── file-author-repository.ts   # Production repository
-│   └── in-memory-author-repository.ts  # Test repository
-└── mappers/
-    └── author-mapper.ts            # Raw data → domain mapper
+│   ├── entities/
+│   │   └── author.ts                             # Author entity type
+│   └── repositories/
+│       └── author-repository.ts                  # Repository interface
+├── application/
+│   └── use-cases/
+│       └── find-author.ts                        # FindAuthorUseCase
+└── infrastructure/
+    ├── controllers/
+    │   └── author-controller.ts                  # HTTP handler
+    ├── factories/
+    │   └── find-author-use-case.ts               # Use case factory
+    ├── mappers/
+    │   └── author-mapper.ts                      # Raw data → domain mapper
+    └── repositories/
+        ├── file-author-repository.ts             # Production repository
+        └── in-memory-author-repository.ts        # Test repository
 ```

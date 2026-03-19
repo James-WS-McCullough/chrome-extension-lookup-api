@@ -80,7 +80,7 @@ const detectPage = async (): Promise<void> => {
   }
 };
 
-const RESET = (): void => {
+const resetStore = (): void => {
   status.value = LookupStatus.Idle;
   authorData.value = null;
   errorMessage.value = "";
@@ -96,5 +96,5 @@ export const useLookupStore = () => ({
   lookup,
   onButtonLeave,
   detectPage,
-  $reset: RESET,
+  $reset: resetStore,
 });

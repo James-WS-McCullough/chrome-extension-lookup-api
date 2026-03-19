@@ -146,7 +146,7 @@ This document captures the reasoning behind key technical decisions in the proje
 
 ### No Code Comments
 
-**Decision:** Avoid comments in code as a default. Rely on intention-revealing names for functions, variables, and files. If logic requires a comment to be understood, extract it into a named function instead. Exceptions are made where a comment adds contextual value that the code alone cannot convey — for example, explaining the architectural purpose of a layer boundary or to offer some context missing in this single endpoint implimentation.
+**Decision:** Avoid comments in code as a default. Rely on intention-revealing names for functions, variables, and files. If logic requires a comment to be understood, extract it into a named function instead. Exceptions are made where a comment adds contextual value that the code alone cannot convey — for example, explaining the architectural purpose of a layer boundary or to offer some context missing in this single endpoint implementation.
 
 **Reasoning:** Comments, if not updated alongside the code, can become more misleading than helpful. Using clear names to explain the code means there are no legacy comments that contradict what the code actually does. If something is complex enough to need a comment, extracting it as a separately named function makes the intent self-evident and keeps the explanation tied to the code itself. Allowing targeted exceptions ensures that genuinely useful context — the _why_ behind a decision — is preserved where it matters most.
 
@@ -162,7 +162,7 @@ This document captures the reasoning behind key technical decisions in the proje
 
 **Reasoning:** Supertest makes writing test cases easy with a fluent API and clearer assertions than raw fetch. It also removes the need to manage a running server during tests — it handles the lifecycle internally.
 
-**Counterpoint:** Playwright or other HTTP testing tools would work equally well. For tests that need to verify behaviour across a real network boundary (e.g. testing CORS, timeouts, or load balancers), a real running server with fetch or an HTTP client would be more representative of production conditions. You could also ensure a freshly seeded database schema for each test to allow for realistic but easily reproducable conditions.
+**Counterpoint:** Playwright or other HTTP testing tools would work equally well. For tests that need to verify behaviour across a real network boundary (e.g. testing CORS, timeouts, or load balancers), a real running server with fetch or an HTTP client would be more representative of production conditions. You could also ensure a freshly seeded database schema for each test to allow for realistic but easily reproducible conditions.
 
 ---
 

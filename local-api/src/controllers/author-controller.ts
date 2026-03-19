@@ -14,7 +14,11 @@ export class AuthorController {
   }
 
   handle = async (req: Request, res: Response): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a delay for demonstration purposes
+    const delayMs = Number(process.env.SIMULATED_DELAY_MS) || 0;
+    if (delayMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+
     const result = authorQuerySchema.safeParse(req.query);
 
     if (!result.success) {

@@ -28,7 +28,7 @@ defineProps<{
 
 .status-card__message {
   font-size: 13px;
-  color: #d8dce3;
+  color: var(--grey-100);
   line-height: 1.5;
 }
 </style>

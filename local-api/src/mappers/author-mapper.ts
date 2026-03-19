@@ -16,6 +16,9 @@ export type RawAuthorEntry = {
   samplePayloads: { type: string; title: string; value: string | number }[];
 };
 
+// Maps raw dataset entries to domain Author objects.
+// Any formatting changes (e.g. case normalisation, field renaming) between
+// the external data shape and the domain model should be applied here.
 export const toAuthor = (entry: RawAuthorEntry): Author => {
   return {
     author: entry.author,

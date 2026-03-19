@@ -29,8 +29,8 @@ button {
   margin: 0;
   font-family: inherit;
   font-size: 14px;
-  background: #1d62dd;
-  color: #f0f2f5;
+  background: var(--blue-500);
+  color: var(--grey-50);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -41,12 +41,12 @@ button .material-symbols-outlined {
 }
 
 button:hover {
-  background: #1752ba;
+  background: var(--blue-600);
 }
 
 button:disabled {
-  background: #373e4d;
-  color: #7e879a;
+  background: var(--grey-700);
+  color: var(--grey-400);
   cursor: not-allowed;
 }
 
@@ -54,8 +54,8 @@ button:disabled {
   display: inline-block;
   width: 18px;
   height: 18px;
-  border: 2px solid #7e879a;
-  border-top-color: #f0f2f5;
+  border: 2px solid var(--grey-400);
+  border-top-color: var(--grey-50);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
   vertical-align: middle;

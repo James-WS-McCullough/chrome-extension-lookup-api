@@ -21,6 +21,16 @@ cd ../chrome-extension && npm install
 
 Both `local-api/.env` and `chrome-extension/.env` are committed to this repository for convenience. In a real project, `.env` files should be added to `.gitignore` and never committed, as they typically contain secrets or environment-specific configuration. Since this project is designed to run only on localhost with no sensitive values, they are included so the project works out of the box without additional setup.
 
+### Simulated API Delay
+
+To see the extension's loading states in action, uncomment `SIMULATED_DELAY_MS` in `local-api/.env`:
+
+```env
+SIMULATED_DELAY_MS=1000
+```
+
+This adds an artificial delay (in milliseconds) to API responses, making it easy to observe spinners and transitions. It is disabled by default so tests run at full speed.
+
 ## Running the API
 
 Start the local API server on port 3000:

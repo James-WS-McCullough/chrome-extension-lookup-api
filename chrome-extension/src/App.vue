@@ -32,12 +32,19 @@ const handleLookup = async (): Promise<void> => {
     return;
   }
 
-  const [result] = await chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: extractFirstAuthor,
-  });
+  let authorName: string | null;
 
-  const authorName = result?.result as string | null;
+  try {
+    const [result] = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: extractFirstAuthor,
+    });
+    authorName = result?.result as string | null;
+  } catch {
+    status.value = "error";
+    errorMessage.value = "Could not read the page content.";
+    return;
+  }
 
   if (!authorName) {
     status.value = "error";

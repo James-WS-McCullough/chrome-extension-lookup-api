@@ -37,7 +37,7 @@ defineEmits<{
 .author-card h2 {
   font-size: 16px;
   margin-bottom: 12px;
-  color: #f0f2f5;
+  color: var(--grey-50);
 }
 
 .author-card dl {
@@ -50,12 +50,12 @@ defineEmits<{
 .author-card dt {
   font-weight: 600;
   font-size: 13px;
-  color: #7e879a;
+  color: var(--grey-400);
 }
 
 .author-card dd {
   font-size: 13px;
-  color: #bec4ce;
+  color: var(--grey-200);
 }
 
 .refresh-btn {
@@ -66,18 +66,19 @@ defineEmits<{
   height: 30px;
   padding: 0;
   background: none;
-  border: 1px solid #373e4d;
+  border: 1px solid var(--grey-700);
   border-radius: 6px;
-  color: #7e879a;
+  color: var(--grey-400);
   font-size: 18px;
   cursor: pointer;
+  transition: background 0.2s, color 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .refresh-btn:hover {
-  background: #373e4d;
-  color: #f0f2f5;
+  background: var(--grey-700);
+  color: var(--grey-50);
 }
 </style>

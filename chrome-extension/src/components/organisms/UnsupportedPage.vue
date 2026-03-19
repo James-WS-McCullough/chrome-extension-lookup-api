@@ -10,6 +10,6 @@ import StatusCard from "../molecules/StatusCard.vue";
 
 <style scoped>
 a {
-  color: #60a5fa;
+  color: var(--blue-300);
 }
 </style>

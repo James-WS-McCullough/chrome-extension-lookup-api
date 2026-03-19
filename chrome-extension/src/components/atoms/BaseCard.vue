@@ -6,8 +6,8 @@
 
 <style scoped>
 .base-card {
-  background: #262b37;
-  border: 1px solid #373e4d;
+  background: var(--grey-800);
+  border: 1px solid var(--grey-700);
   border-radius: 8px;
   padding: 16px;
   animation: zoom-fade-in 0.4s ease-out;

@@ -23,13 +23,13 @@ defineProps<{
 }
 
 .icon-badge--error {
-  background: #3f1a1a;
-  color: #f87171;
+  background: var(--error-bg);
+  color: var(--error-text);
 }
 
 .icon-badge--info {
-  background: #1a2a3f;
-  color: #60a5fa;
+  background: var(--blue-900);
+  color: var(--blue-300);
   font-style: italic;
 }
 </style>

@@ -40,7 +40,7 @@ onMounted(detectPage);
       </StatusCard>
     </template>
     <template #action>
-      <Transition name="fade" @after-leave="onButtonLeave">
+      <Transition leave-active-class="animate-fade-out" @after-leave="onButtonLeave">
         <LookupButton
           v-if="buttonVisible"
           :loading="status === LookupStatus.Loading"
@@ -50,20 +50,3 @@ onMounted(detectPage);
     </template>
   </PopupLayout>
 </template>
-
-<style scoped>
-.fade-leave-active {
-  animation: fade-out 0.4s ease-out forwards;
-}
-
-@keyframes fade-out {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
-</style>

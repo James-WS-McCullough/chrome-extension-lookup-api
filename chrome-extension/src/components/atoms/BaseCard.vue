@@ -1,26 +1,5 @@
 <template>
-  <div class="base-card">
+  <div class="bg-grey-800 border border-grey-700 rounded-lg p-4 animate-zoom-fade-in">
     <slot />
   </div>
 </template>
-
-<style scoped>
-.base-card {
-  background: var(--grey-800);
-  border: 1px solid var(--grey-700);
-  border-radius: 8px;
-  padding: 16px;
-  animation: zoom-fade-in 0.4s ease-out;
-}
-
-@keyframes zoom-fade-in {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-</style>

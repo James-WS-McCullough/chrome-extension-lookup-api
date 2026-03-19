@@ -37,13 +37,13 @@ describe("AuthorCard", () => {
   it("emits refresh when the refresh button is clicked", async () => {
     const wrapper = mount(AuthorCard, { props: { data: mockData } });
 
-    await wrapper.find(".refresh-btn").trigger("click");
+    await wrapper.find("button[aria-label='Refresh']").trigger("click");
     expect(wrapper.emitted("refresh")).toHaveLength(1);
   });
 
   it("renders inside a base card", () => {
     const wrapper = mount(AuthorCard, { props: { data: mockData } });
 
-    expect(wrapper.find(".base-card").exists()).toBe(true);
+    expect(wrapper.findComponent({ name: "BaseCard" }).exists()).toBe(true);
   });
 });

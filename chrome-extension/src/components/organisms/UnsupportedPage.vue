@@ -4,12 +4,6 @@ import StatusCard from "../molecules/StatusCard.vue";
 
 <template>
   <StatusCard icon="i" variant="info">
-    <p>Navigate to <a href="https://quotes.toscrape.com" target="_blank">quotes.toscrape.com</a> to use this extension.</p>
+    <p>Navigate to <a class="text-blue-300" href="https://quotes.toscrape.com" target="_blank">quotes.toscrape.com</a> to use this extension.</p>
   </StatusCard>
 </template>
-
-<style scoped>
-a {
-  color: var(--blue-300);
-}
-</style>

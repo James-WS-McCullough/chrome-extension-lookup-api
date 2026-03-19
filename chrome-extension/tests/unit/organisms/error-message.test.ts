@@ -16,7 +16,8 @@ describe("ErrorMessage", () => {
       props: { message: "Error" },
     });
 
-    expect(wrapper.find(".icon-badge--error").exists()).toBe(true);
+    const iconBadge = wrapper.findComponent({ name: "IconBadge" });
+    expect(iconBadge.props("variant")).toBe("error");
   });
 
   it("renders the exclamation icon", () => {
@@ -24,6 +25,7 @@ describe("ErrorMessage", () => {
       props: { message: "Error" },
     });
 
-    expect(wrapper.find(".icon-badge").text()).toBe("!");
+    const iconBadge = wrapper.findComponent({ name: "IconBadge" });
+    expect(iconBadge.text()).toBe("!");
   });
 });

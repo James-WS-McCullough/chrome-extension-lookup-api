@@ -16,7 +16,7 @@ describe("LookupButton", () => {
       props: { loading: true },
     });
 
-    expect(wrapper.find(".spinner").exists()).toBe(true);
+    expect(wrapper.find("span.animate-spin").exists()).toBe(true);
     expect(wrapper.text()).not.toContain("Get Author Data");
   });
 

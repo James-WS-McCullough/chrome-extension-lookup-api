@@ -6,30 +6,12 @@ defineProps<{
 </script>
 
 <template>
-  <p :class="['icon-badge', `icon-badge--${variant}`]">{{ icon }}</p>
+  <p
+    :class="[
+      'flex items-center justify-center shrink-0 w-9 h-9 rounded-full text-lg font-bold',
+      variant === 'error' ? 'bg-error-bg text-error-text' : 'bg-blue-900 text-blue-300 italic',
+    ]"
+  >
+    {{ icon }}
+  </p>
 </template>
-
-<style scoped>
-.icon-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.icon-badge--error {
-  background: var(--error-bg);
-  color: var(--error-text);
-}
-
-.icon-badge--info {
-  background: var(--blue-900);
-  color: var(--blue-300);
-  font-style: italic;
-}
-</style>

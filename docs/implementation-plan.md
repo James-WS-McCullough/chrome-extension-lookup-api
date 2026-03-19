@@ -449,3 +449,182 @@ chrome-extension/
 ├── tsconfig.json
 └── package.json
 ```
+
+---
+
+## Phase 4: Tailwind CSS Migration (`chrome-extension/`)
+
+Replace raw CSS (CSS custom properties, scoped `<style>` blocks, and global stylesheets) with Tailwind CSS utility classes.
+
+### Step 1 — Install and configure Tailwind
+
+- Install dependencies: `tailwindcss`, `@tailwindcss/vite`.
+- Add the Tailwind Vite plugin to `vite.config.ts`:
+  ```ts
+  import tailwindcss from "@tailwindcss/vite";
+  // add tailwindcss() to the plugins array
+  ```
+- Create `src/app.css` as the Tailwind entry point:
+  ```css
+  @import "tailwindcss";
+  ```
+- Import `./app.css` in `src/main.ts`.
+
+### Step 2 — Configure the custom theme
+
+The current design uses a custom colour palette defined in `styles/tokens.css` (CSS custom properties for `blue-*`, `grey-*`, and `error-*`). Map these to Tailwind's theme system.
+
+- Add a `@theme` block in `src/app.css` to define custom colours:
+  ```css
+  @import "tailwindcss";
+
+  @theme {
+    --color-blue-50: #f0f0fb;
+    --color-blue-100: #c4d8f5;
+    --color-blue-200: #96bfee;
+    --color-blue-300: #6ba0e5;
+    --color-blue-400: #3f83dc;
+    --color-blue-500: #1d62dd;
+    --color-blue-600: #1752ba;
+    --color-blue-700: #124297;
+    --color-blue-800: #003274;
+    --color-blue-900: #082351;
+
+    --color-grey-50: #f0f2f5;
+    --color-grey-100: #d8dce3;
+    --color-grey-200: #bec4ce;
+    --color-grey-300: #a1a9b0;
+    --color-grey-400: #7e879a;
+    --color-grey-500: #5e677c;
+    --color-grey-600: #4a5264;
+    --color-grey-700: #373e4d;
+    --color-grey-800: #262b37;
+    --color-grey-900: #161a22;
+
+    --color-error-bg: #3f1a1a;
+    --color-error-text: #f87171;
+  }
+  ```
+- This replaces the CSS custom properties in `styles/tokens.css` with Tailwind theme tokens accessible via utility classes (e.g. `bg-grey-800`, `text-blue-300`, `border-grey-700`).
+
+### Step 3 — Define custom utilities for animations
+
+The extension uses three custom animations: `zoom-fade-in` (card entrance), `spin` (loading spinner), and `fade-out` (button exit). Tailwind includes a `spin` animation by default. Define the other two as custom utilities in `src/app.css`:
+
+```css
+@utility animate-zoom-fade-in {
+  animation: zoom-fade-in 0.4s ease-out;
+}
+
+@utility animate-fade-out {
+  animation: fade-out 0.4s ease-out forwards;
+}
+
+@keyframes zoom-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+```
+
+### Step 4 — Migrate global styles (`popup.css`)
+
+Replace `styles/popup.css` content with Tailwind utilities applied directly in templates:
+
+- **`body`** styles → move `w-[350px] h-[220px] p-4 bg-grey-900 text-grey-100 font-['Open_Sans',system-ui,sans-serif]` to the `<body>` or `<main>` tag in `popup.html`, or apply via a `@layer base` block in `src/app.css`.
+- **`main`** flex layout → `flex flex-col h-full` on `<main>` in `popup.html`.
+- **`#app`** gap → `flex flex-col gap-3 h-full` applied in `App.vue` or `popup.html`.
+- **`h1`** styles → `flex items-center gap-2 text-lg text-grey-50` applied in `PopupLayout.vue`.
+- Remove `styles/popup.css` once all styles are migrated.
+
+### Step 5 — Migrate atom components
+
+**`BaseCard.vue`**:
+- Replace `<div class="base-card">` with `<div class="bg-grey-800 border border-grey-700 rounded-lg p-4 animate-zoom-fade-in">`.
+- Remove the `<style scoped>` block entirely.
+
+**`IconBadge.vue`**:
+- Replace the class-based variant logic with dynamic Tailwind classes.
+- Base classes: `flex items-center justify-center shrink-0 w-9 h-9 rounded-full text-lg font-bold`.
+- Error variant: `bg-error-bg text-error-text`.
+- Info variant: `bg-blue-900 text-blue-300 italic`.
+- Remove the `<style scoped>` block.
+
+**`LookupButton.vue`**:
+- Button base: `inline-flex items-center justify-center gap-2 w-full py-2.5 font-inherit text-sm bg-blue-500 text-grey-50 border-none rounded-md cursor-pointer transition-colors`.
+- Hover: `hover:bg-blue-600`.
+- Disabled: `disabled:bg-grey-700 disabled:text-grey-400 disabled:cursor-not-allowed`.
+- Material icon span: `text-xl`.
+- Spinner: `inline-block w-5 h-5 border-2 border-grey-400 border-t-grey-50 rounded-full animate-spin align-middle`.
+- Remove the `<style scoped>` block.
+
+### Step 6 — Migrate molecule components
+
+**`StatusCard.vue`**:
+- Replace `<div class="status-card">` with `<div class="flex items-center gap-3.5">`.
+- Replace `<div class="status-card__message">` with `<div class="text-sm text-grey-100 leading-normal">`.
+- Remove the `<style scoped>` block.
+
+### Step 7 — Migrate organism components
+
+**`AuthorCard.vue`**:
+- `.author-card` → `relative`.
+- `h2` → `text-base mb-3 text-grey-50`.
+- `dl` → `grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 mb-2`.
+- `dt` → `font-semibold text-sm text-grey-400`.
+- `dd` → `text-sm text-grey-200`.
+- Refresh button → `absolute bottom-0 right-0 w-8 h-8 p-0 bg-transparent border border-grey-700 rounded-md text-grey-400 text-lg cursor-pointer transition-colors flex items-center justify-center hover:bg-grey-700 hover:text-grey-50`.
+- Remove the `<style scoped>` block.
+
+**`UnsupportedPage.vue`**:
+- Replace `<a>` styles with `text-blue-300` on the `<a>` tag.
+- Remove the `<style scoped>` block.
+
+**`ErrorMessage.vue`**:
+- Already has no `<style>` block. No changes needed.
+
+### Step 8 — Migrate template and page components
+
+**`PopupLayout.vue`**:
+- `.content-area` → `flex-1 flex items-center [&>*]:w-full`.
+- Remove the `<style scoped>` block.
+
+**`LookupPage.vue`**:
+- `.fade-leave-active` → apply `animate-fade-out` class via Vue's `<Transition>` `leave-active-class` prop: `<Transition leave-active-class="animate-fade-out">`.
+- Remove the `<style scoped>` block.
+
+### Step 9 — Clean up
+
+- Delete `styles/tokens.css` — replaced by Tailwind `@theme`.
+- Delete `styles/popup.css` — replaced by utility classes.
+- Remove the `styles/` directory.
+- Update `popup.html`: remove the `<link>` tags for `styles/tokens.css` and `styles/popup.css`. The Tailwind styles are injected by Vite via the CSS import in `main.ts` and output to `dist/style.css`.
+- Verify no `<style>` blocks remain in any `.vue` files.
+- Run `npm run build` and confirm the extension works with no visual changes.
+
+### Step 10 — Update tests
+
+- Component tests should still pass as-is since they test behaviour, not CSS classes.
+- If any tests assert specific class names, update them to match the new Tailwind utility classes.
+- Run `npm test` to confirm all tests pass.
+
+### Step 11 — Update documentation
+
+- Update `chrome-extension/README.md` to mention Tailwind CSS as a styling dependency.
+- Update the `CLAUDE.md` Style section to note that Tailwind utility classes are used instead of raw CSS, and that `src/app.css` is the Tailwind entry point containing theme tokens and custom animation utilities.

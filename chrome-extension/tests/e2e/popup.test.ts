@@ -95,7 +95,7 @@ describe("popup e2e", () => {
       await flushPromises();
 
       expect(wrapper.text()).toContain("quotes.toscrape.com");
-      expect(wrapper.find(".icon-badge--info").exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "IconBadge" }).exists()).toBe(true);
     });
 
     it("does not show the lookup button", async () => {
@@ -173,7 +173,7 @@ describe("popup e2e", () => {
         );
       });
 
-      expect(wrapper.find(".icon-badge--error").exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "IconBadge" }).exists()).toBe(true);
     });
   });
 

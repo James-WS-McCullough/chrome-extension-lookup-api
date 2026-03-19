@@ -14,71 +14,24 @@ defineEmits<{
 
 <template>
   <BaseCard>
-    <div class="author-card">
-      <h2>{{ toTitleCase(data.author) }}</h2>
-      <dl>
-        <dt>Category</dt>
-        <dd>{{ data.profile.category }}</dd>
-        <dt>Difficulty</dt>
-        <dd>{{ data.profile.difficulty }}</dd>
-        <dt>Rate Limit</dt>
-        <dd>{{ data.integrationHints.rateLimitPerMinute }} req/min</dd>
+    <div class="relative">
+      <h2 class="text-base mb-3 text-grey-50">{{ toTitleCase(data.author) }}</h2>
+      <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 mb-2">
+        <dt class="font-semibold text-sm text-grey-400">Category</dt>
+        <dd class="text-sm text-grey-200">{{ data.profile.category }}</dd>
+        <dt class="font-semibold text-sm text-grey-400">Difficulty</dt>
+        <dd class="text-sm text-grey-200">{{ data.profile.difficulty }}</dd>
+        <dt class="font-semibold text-sm text-grey-400">Rate Limit</dt>
+        <dd class="text-sm text-grey-200">{{ data.integrationHints.rateLimitPerMinute }} req/min</dd>
       </dl>
-      <button class="refresh-btn" type="button" aria-label="Refresh" @click="$emit('refresh')">&#x21bb;</button>
+      <button
+        class="absolute bottom-0 right-0 w-8 h-8 p-0 bg-transparent border border-grey-700 rounded-md text-grey-400 text-lg cursor-pointer transition-colors flex items-center justify-center hover:bg-grey-700 hover:text-grey-50"
+        type="button"
+        aria-label="Refresh"
+        @click="$emit('refresh')"
+      >
+        &#x21bb;
+      </button>
     </div>
   </BaseCard>
 </template>
-
-<style scoped>
-.author-card {
-  position: relative;
-}
-
-.author-card h2 {
-  font-size: 16px;
-  margin-bottom: 12px;
-  color: var(--grey-50);
-}
-
-.author-card dl {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 6px 16px;
-  margin-bottom: 8px;
-}
-
-.author-card dt {
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--grey-400);
-}
-
-.author-card dd {
-  font-size: 13px;
-  color: var(--grey-200);
-}
-
-.refresh-btn {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  background: none;
-  border: 1px solid var(--grey-700);
-  border-radius: 6px;
-  color: var(--grey-400);
-  font-size: 18px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.refresh-btn:hover {
-  background: var(--grey-700);
-  color: var(--grey-50);
-}
-</style>

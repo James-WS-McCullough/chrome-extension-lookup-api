@@ -6,7 +6,8 @@ describe("UnsupportedPage", () => {
   it("renders the info variant", () => {
     const wrapper = mount(UnsupportedPage);
 
-    expect(wrapper.find(".icon-badge--info").exists()).toBe(true);
+    const iconBadge = wrapper.findComponent({ name: "IconBadge" });
+    expect(iconBadge.props("variant")).toBe("info");
   });
 
   it("renders a link to quotes.toscrape.com", () => {

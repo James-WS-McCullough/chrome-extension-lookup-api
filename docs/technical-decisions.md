@@ -92,13 +92,13 @@ This document captures the reasoning behind key technical decisions in the proje
 
 ## Chrome Extension
 
-### Vanilla CSS
+### Tailwind CSS
 
-**Decision:** Write all popup styles in plain CSS with no framework, using a dark theme with design tokens defined as CSS custom properties. The colour system (blue and cool grey ladders, plus semantic error tokens) is extracted into a dedicated `styles/tokens.css` file, with global layout styles in `styles/popup.css`. All component styles reference `var()` tokens rather than raw hex values.
+**Decision:** Use Tailwind CSS for all popup styling via utility classes applied directly in Vue component templates. The custom colour palette (blue and cool grey ladders, plus semantic error tokens) is defined in a `@theme` block inside `src/app.css`, alongside custom animation utilities. No scoped `<style>` blocks are used in Vue components.
 
-**Reasoning:** Vanilla CSS keeps the extension lightweight with no build tooling overhead. The popup has a small, fixed layout with few states, making a CSS framework unnecessary. Extracting colour tokens into a separate file provides a single source of truth for the palette — updating a colour requires changing one value rather than searching across components.
+**Reasoning:** Tailwind is a commonly used, clean CSS framework that enforces design consistency through a constrained set of utility classes. It eliminates the need to maintain separate CSS files or scoped style blocks — styles live directly in the template where they're used, making it easy to see what a component looks like without switching between files. The `@theme` configuration provides a single source of truth for the colour palette, and custom `@utility` definitions handle project-specific animations. Since Vite already handles the build, adding the `@tailwindcss/vite` plugin integrates cleanly with no additional tooling.
 
-**Counterpoint:** For a larger extension UI with many components, Tailwind would enforce design consistency and speed up development. It would also make the colour token system easier to manage via `tailwind.config`. For this scope, vanilla CSS with custom properties is sufficient.
+**Counterpoint:** Utility classes can make templates verbose and harder to read when many styles are applied to a single element. For teams unfamiliar with Tailwind, there is a learning curve in mapping CSS properties to utility class names. Vanilla CSS with scoped styles offers better encapsulation per component and avoids the Tailwind dependency entirely — for a small popup with few states, the framework overhead may not pay for itself.
 
 ---
 

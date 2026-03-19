@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-Built with Vue 3 (Composition API), Vite, and atomic design. The extension detects when the user is on `quotes.toscrape.com`, extracts the first author from the page, and looks up their data via the local API.
+Built with Vue 3 (Composition API), Vite, Tailwind CSS, and atomic design. The extension detects when the user is on `quotes.toscrape.com`, extracts the first author from the page, and looks up their data via the local API.
 
 ## Directory Structure
 
@@ -28,9 +28,9 @@ chrome-extension/
 │   │   ├── url-matcher.ts
 │   │   └── title-case.ts
 │   ├── App.vue                  # Root component (orchestrator)
+│   ├── app.css                  # Tailwind entry point (theme tokens, custom utilities)
 │   └── main.ts                  # Vue app entry point
 ├── popup.html
-├── popup.css
 ├── manifest.json
 ├── vite.config.ts
 ├── tests/

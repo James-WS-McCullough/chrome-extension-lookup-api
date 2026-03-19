@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+
+@theme {
+  --color-blue-50: #f0f0fb;
+  --color-blue-100: #c4d8f5;
+  --color-blue-200: #96bfee;
+  --color-blue-300: #6ba0e5;
+  --color-blue-400: #3f83dc;
+  --color-blue-500: #1d62dd;
+  --color-blue-600: #1752ba;
+  --color-blue-700: #124297;
+  --color-blue-800: #003274;
+  --color-blue-900: #082351;
+
+  --color-grey-50: #f0f2f5;
+  --color-grey-100: #d8dce3;
+  --color-grey-200: #bec4ce;
+  --color-grey-300: #a1a9b0;
+  --color-grey-400: #7e879a;
+  --color-grey-500: #5e677c;
+  --color-grey-600: #4a5264;
+  --color-grey-700: #373e4d;
+  --color-grey-800: #262b37;
+  --color-grey-900: #161a22;
+
+  --color-error-bg: #3f1a1a;
+  --color-error-text: #f87171;
+
+  --font-sans: "Open Sans", system-ui, -apple-system, sans-serif;
+}
+
+@utility animate-zoom-fade-in {
+  animation: zoom-fade-in 0.4s ease-out;
+}
+
+@utility animate-fade-out {
+  animation: fade-out 0.4s ease-out forwards;
+}
+
+@keyframes zoom-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  width: 350px;
+  height: 220px;
+  padding: 16px;
+  background: var(--color-grey-900);
+  color: var(--color-grey-100);
+}

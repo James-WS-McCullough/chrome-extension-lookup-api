@@ -10,25 +10,11 @@ defineProps<{
 
 <template>
   <BaseCard>
-    <div class="status-card">
+    <div class="flex items-center gap-3.5">
       <IconBadge :icon="icon" :variant="variant" />
-      <div class="status-card__message">
+      <div class="text-sm text-grey-100 leading-normal">
         <slot />
       </div>
     </div>
   </BaseCard>
 </template>
-
-<style scoped>
-.status-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.status-card__message {
-  font-size: 13px;
-  color: var(--grey-100);
-  line-height: 1.5;
-}
-</style>

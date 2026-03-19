@@ -10,7 +10,7 @@ describe("BaseCard", () => {
       },
     });
 
-    expect(wrapper.find(".base-card").exists()).toBe(true);
+    expect(wrapper.find("div").exists()).toBe(true);
     expect(wrapper.text()).toContain("Card content");
   });
 

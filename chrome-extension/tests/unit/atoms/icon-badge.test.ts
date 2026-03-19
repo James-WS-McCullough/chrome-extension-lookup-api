@@ -11,19 +11,23 @@ describe("IconBadge", () => {
     expect(wrapper.text()).toBe("!");
   });
 
-  it("applies the error variant class", () => {
+  it("applies the error variant classes", () => {
     const wrapper = mount(IconBadge, {
       props: { icon: "!", variant: "error" },
     });
 
-    expect(wrapper.find(".icon-badge--error").exists()).toBe(true);
+    const badge = wrapper.find("p");
+    expect(badge.classes()).toContain("bg-error-bg");
+    expect(badge.classes()).not.toContain("italic");
   });
 
-  it("applies the info variant class", () => {
+  it("applies the info variant classes", () => {
     const wrapper = mount(IconBadge, {
       props: { icon: "i", variant: "info" },
     });
 
-    expect(wrapper.find(".icon-badge--info").exists()).toBe(true);
+    const badge = wrapper.find("p");
+    expect(badge.classes()).toContain("bg-blue-900");
+    expect(badge.classes()).toContain("italic");
   });
 });

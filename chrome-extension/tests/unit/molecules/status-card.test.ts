@@ -9,8 +9,10 @@ describe("StatusCard", () => {
       slots: { default: "<p>Error occurred</p>" },
     });
 
-    expect(wrapper.find(".icon-badge--error").exists()).toBe(true);
-    expect(wrapper.find(".icon-badge").text()).toBe("!");
+    const iconBadge = wrapper.findComponent({ name: "IconBadge" });
+    expect(iconBadge.exists()).toBe(true);
+    expect(iconBadge.props("variant")).toBe("error");
+    expect(iconBadge.text()).toBe("!");
   });
 
   it("renders slot content as the message", () => {
@@ -28,6 +30,6 @@ describe("StatusCard", () => {
       slots: { default: "<p>Message</p>" },
     });
 
-    expect(wrapper.find(".base-card").exists()).toBe(true);
+    expect(wrapper.findComponent({ name: "BaseCard" }).exists()).toBe(true);
   });
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AuthorData } from "../../services/author-api";
+import type { AuthorData } from "../../gateways/author-gateway";
 import { toTitleCase } from "../../utils/title-case";
 import BaseCard from "../atoms/BaseCard.vue";
 

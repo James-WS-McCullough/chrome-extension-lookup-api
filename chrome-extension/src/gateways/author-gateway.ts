@@ -1,3 +1,5 @@
+import { HttpError, httpGet } from "../services/http-client";
+
 export type AuthorData = {
   author: string;
   profile: {
@@ -15,17 +17,12 @@ export type AuthorData = {
 };
 
 export const fetchAuthorData = async (authorName: string): Promise<AuthorData> => {
-  const url = `${import.meta.env.VITE_API_BASE_URL}/author-data?author=${encodeURIComponent(authorName)}`;
-
-  const response = await fetch(url);
-
-  if (response.status === 404) {
-    throw new Error("Author not found");
+  try {
+    return await httpGet<AuthorData>("/author-data", { author: authorName });
+  } catch (error) {
+    if (error instanceof HttpError && error.status === 404) {
+      throw new Error("Author not found");
+    }
+    throw error;
   }
-
-  if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
-  }
-
-  return response.json() as Promise<AuthorData>;
 };

@@ -1,5 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { fetchAuthorData } from "../../src/services/author-api";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { fetchAuthorData } from "../../src/gateways/author-gateway";
+import { HttpError } from "../../src/services/http-client";
+
+vi.mock("../../src/services/http-client", async (importOriginal) => {
+  const original = await importOriginal<typeof import("../../src/services/http-client")>();
+  return {
+    ...original,
+    httpGet: vi.fn(),
+  };
+});
+
+import { httpGet } from "../../src/services/http-client";
 
 const mockAuthorResponse = {
   author: "Albert Einstein",
@@ -24,50 +35,33 @@ const mockAuthorResponse = {
 };
 
 describe("fetchAuthorData", () => {
-  beforeEach(() => {
-    vi.stubGlobal("fetch", vi.fn());
-  });
-
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
   it("returns author data on success", async () => {
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: () => Promise.resolve(mockAuthorResponse),
-    } as Response);
+    vi.mocked(httpGet).mockResolvedValue(mockAuthorResponse);
 
     const result = await fetchAuthorData("Albert Einstein");
+
     expect(result).toEqual(mockAuthorResponse);
-    expect(fetch).toHaveBeenCalledWith(
-      `${import.meta.env.VITE_API_BASE_URL}/author-data?author=Albert%20Einstein`,
-    );
+    expect(httpGet).toHaveBeenCalledWith("/author-data", { author: "Albert Einstein" });
   });
 
-  it("throws on 404 response", async () => {
-    vi.mocked(fetch).mockResolvedValue({
-      ok: false,
-      status: 404,
-      json: () => Promise.resolve({ error: "Author not found" }),
-    } as Response);
+  it("throws 'Author not found' on 404", async () => {
+    vi.mocked(httpGet).mockRejectedValue(new HttpError(404));
 
     await expect(fetchAuthorData("unknown")).rejects.toThrow("Author not found");
   });
 
-  it("throws on non-OK response", async () => {
-    vi.mocked(fetch).mockResolvedValue({
-      ok: false,
-      status: 500,
-      json: () => Promise.resolve({}),
-    } as Response);
+  it("re-throws non-404 HttpErrors", async () => {
+    vi.mocked(httpGet).mockRejectedValue(new HttpError(500));
 
     await expect(fetchAuthorData("test")).rejects.toThrow("Request failed with status 500");
   });
 
-  it("throws on network error", async () => {
-    vi.mocked(fetch).mockRejectedValue(new TypeError("Failed to fetch"));
+  it("re-throws network errors", async () => {
+    vi.mocked(httpGet).mockRejectedValue(new TypeError("Failed to fetch"));
 
     await expect(fetchAuthorData("test")).rejects.toThrow("Failed to fetch");
   });

@@ -18,9 +18,13 @@ This document captures the reasoning behind key technical decisions in the proje
 
 ### Hexagonal Architecture (Ports & Adapters)
 
-**Decision:** Organise the backend into distinct layers — domain, repositories (interfaces), use cases, controllers, infrastructure, and mappers — with dependencies pointing inward only.
+**Decision:** Organise the backend into three root layers — `domain/`, `application/`, and `infrastructure/` — following classic DDD structure, with dependencies pointing inward only.
 
-**Reasoning:** Hexagonal architecture is a good blueprint for keeping large API projects clean. Although this is a toy example, the API is built as if it would be expanded into a full-scale project. The layer separation makes it straightforward to swap implementations (e.g. replace the file-based data source with a database) without touching business logic.
+- **Domain** contains `entities/` (pure types) and `repositories/` (interface contracts).
+- **Application** contains `use-cases/` that depend only on domain interfaces.
+- **Infrastructure** contains `repositories/` (concrete implementations), `mappers/`, `controllers/`, and `factories/`.
+
+**Reasoning:** Hexagonal architecture is a good blueprint for keeping large API projects clean. Although this is a toy example, the API is built as if it would be expanded into a full-scale project. The layer separation makes it straightforward to swap implementations (e.g. replace the file-based data source with a database) without touching business logic. Placing repository interfaces in the domain ensures the dependency flow is strictly inward — application and infrastructure depend on domain, never the reverse.
 
 **Counterpoint:** If the project is guaranteed to remain a simple automation or single use case, this level of layer separation adds unnecessary complexity. A single route handler with inline logic would be faster to build and easier to follow for a small scope.
 
@@ -48,7 +52,7 @@ This document captures the reasoning behind key technical decisions in the proje
 
 ### Manual Constructor Injection (No IoC Container)
 
-**Decision:** Use manual constructor injection to wire dependencies. A factory layer (`src/factories/`) handles constructing use cases and their dependencies (e.g. selecting and instantiating the repository, injecting it into the use case). The composition root (`app.ts`) only imports from factories and controllers — it never touches repositories or infrastructure directly.
+**Decision:** Use manual constructor injection to wire dependencies. A factory layer (`infrastructure/factories/`) handles constructing use cases and their dependencies (e.g. selecting and instantiating the repository, injecting it into the use case). The composition root (`app.ts`) only imports from factories and controllers — it never touches repositories or domain directly.
 
 **Reasoning:** Manual wiring is explicit and easy to trace — there's no hidden resolution logic. The factory layer keeps use case construction contained in one place, so if the repository implementation changes (e.g. switching from file-based to database-backed), only the factory needs updating. Meanwhile `app.ts` remains a thin layer that maps controllers to routes, keeping the dependency graph visible without introducing decorator-based "magic" from a DI container.
 
@@ -90,19 +94,19 @@ This document captures the reasoning behind key technical decisions in the proje
 
 ### Vanilla CSS
 
-**Decision:** Write all popup styles in plain CSS with no framework, using a dark theme with custom colour ladders (blue and cool grey).
+**Decision:** Write all popup styles in plain CSS with no framework, using a dark theme with design tokens defined as CSS custom properties. The colour system (blue and cool grey ladders, plus semantic error tokens) is extracted into a dedicated `styles/tokens.css` file, with global layout styles in `styles/popup.css`. All component styles reference `var()` tokens rather than raw hex values.
 
-**Reasoning:** Vanilla CSS keeps the extension lightweight with no build tooling overhead. The popup has a small, fixed layout with few states, making a CSS framework unnecessary.
+**Reasoning:** Vanilla CSS keeps the extension lightweight with no build tooling overhead. The popup has a small, fixed layout with few states, making a CSS framework unnecessary. Extracting colour tokens into a separate file provides a single source of truth for the palette — updating a colour requires changing one value rather than searching across components.
 
-**Counterpoint:** For a larger extension UI with many components, Tailwind would enforce design consistency and speed up development. It would also make the colour token system (the blue and grey ladders) easier to manage via `tailwind.config`. For this scope, vanilla CSS is sufficient.
+**Counterpoint:** For a larger extension UI with many components, Tailwind would enforce design consistency and speed up development. It would also make the colour token system easier to manage via `tailwind.config`. For this scope, vanilla CSS with custom properties is sufficient.
 
 ---
 
 ### Vue.js with Atomic Design
 
-**Decision:** Use Vue.js to build the popup UI, organised using atomic design (atoms, molecules, organisms).
+**Decision:** Use Vue.js to build the popup UI, organised using atomic design across five levels: atoms, molecules, organisms, templates, and pages. State management is centralised in a composable store (`stores/lookup-store.ts`) with a `LookupStatus` enum. API communication is separated into a generic HTTP client (`services/http-client.ts`) and a domain-specific gateway (`gateways/author-gateway.ts`).
 
-**Reasoning:** The initial prototype used direct DOM manipulation to get something working quickly, but was then refactored to Vue.js for a cleaner frontend developer experience. Vue's component model enabled atomic design, which makes future additions to the extension straightforward — new UI features can be composed from existing atoms and molecules without touching unrelated code.
+**Reasoning:** The initial prototype used direct DOM manipulation to get something working quickly, but was then refactored to Vue.js for a cleaner frontend developer experience. Vue's component model enabled atomic design, which makes future additions to the extension straightforward — new UI features can be composed from existing atoms and molecules without touching unrelated code. The full atomic design hierarchy (templates for layout, pages for state wiring) keeps each component focused on a single responsibility. Extracting state into a store avoids prop-drilling and makes the page component a thin wiring layer. The HTTP client / gateway split mirrors the backend's hexagonal approach, keeping fetch concerns separate from domain logic.
 
 **Counterpoint:** Vue adds a runtime dependency and increases the bundle size compared to vanilla DOM manipulation. For an extension popup that will never grow beyond a few states, the framework overhead may not pay for itself. React or Svelte would offer similar component-based benefits — Vue's advantage here is primarily familiarity and its lightweight single-file component model, not a clear technical differentiator.
 
@@ -142,11 +146,11 @@ This document captures the reasoning behind key technical decisions in the proje
 
 ### No Code Comments
 
-**Decision:** Do not write comments in code. Rely on intention-revealing names for functions, variables, and files. If logic requires a comment to be understood, extract it into a named function instead.
+**Decision:** Avoid comments in code as a default. Rely on intention-revealing names for functions, variables, and files. If logic requires a comment to be understood, extract it into a named function instead. Exceptions are made where a comment adds contextual value that the code alone cannot convey — for example, explaining the architectural purpose of a layer boundary or to offer some context missing in this single endpoint implimentation.
 
-**Reasoning:** Comments, if not updated alongside the code, can become more misleading than helpful. Using clear names to explain the code means there are no legacy comments that contradict what the code actually does. If something is complex enough to need a comment, extracting it as a separately named function makes the intent self-evident and keeps the explanation tied to the code itself.
+**Reasoning:** Comments, if not updated alongside the code, can become more misleading than helpful. Using clear names to explain the code means there are no legacy comments that contradict what the code actually does. If something is complex enough to need a comment, extracting it as a separately named function makes the intent self-evident and keeps the explanation tied to the code itself. Allowing targeted exceptions ensures that genuinely useful context — the _why_ behind a decision — is preserved where it matters most.
 
-**Counterpoint:** Some logic genuinely benefits from explaining _why_ rather than _what_ — business rules, workarounds for third-party quirks, or non-obvious performance decisions. In those cases, a well-placed comment can save the next developer significant time. The risk of stale comments can also be mitigated through code review discipline rather than a blanket ban.
+**Counterpoint:** Some teams prefer a more liberal commenting approach, especially in codebases with high contributor turnover. The risk of stale comments can also be mitigated through code review discipline rather than a near-blanket ban. The line between "adds contextual value" and "unnecessary" is subjective, so consistency depends on team judgement.
 
 ---
 
@@ -184,9 +188,9 @@ This document captures the reasoning behind key technical decisions in the proje
 
 ### Environment Variables for Configuration
 
-**Decision:** Use `.env` files to configure the server port (`PORT`) and the API base URL (`VITE_API_BASE_URL`), rather than hardcoding values. The backend reads `PORT` from `process.env` at runtime. The Chrome extension uses Vite's `import.meta.env` to inline `VITE_API_BASE_URL` at build time, since extensions run in the browser and have no access to `process.env`.
+**Decision:** Use `.env` files to configure the server port (`PORT`), an optional simulated delay (`SIMULATED_DELAY_MS`), and the API base URL (`VITE_API_BASE_URL`), rather than hardcoding values. The backend parses and validates all environment variables at startup through a Zod schema in `env.ts`, which coerces types and applies defaults. The Chrome extension uses Vite's `import.meta.env` to inline `VITE_API_BASE_URL` at build time, since extensions run in the browser and have no access to `process.env`.
 
-**Reasoning:** Even though this project only runs locally, using environment variables demonstrates the standard approach for separating configuration from code. It also means changing the port or API URL requires editing a single `.env` file rather than searching through source files.
+**Reasoning:** Even though this project only runs locally, using environment variables demonstrates the standard approach for separating configuration from code. Centralising the parsing in `env.ts` with Zod validation means invalid configuration fails fast at startup with a clear error, rather than silently producing `NaN` or `undefined` results deep in the application. It also means changing the port or API URL requires editing a single `.env` file rather than searching through source files.
 
 **Counterpoint:** For a project that will genuinely never leave localhost, `.env` files add a layer of indirection. A new developer must check the `.env` file to understand what URL the extension is hitting, whereas a hardcoded value is immediately visible in the source. The build-time inlining also means the value is still a static string in the output — it just lives in a different place.
 

@@ -34,6 +34,7 @@ button {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  transition: background 0.2s, color 0.2s;
 }
 
 button .material-symbols-outlined {

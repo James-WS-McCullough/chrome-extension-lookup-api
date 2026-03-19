@@ -32,7 +32,7 @@ type Author = {
 };
 ```
 
-### Step 3 — Repository interface (`src/repositories/author-repository.ts`)
+### Step 3 — Repository interface (`src/domain/repositories/author-repository.ts`)
 
 Define the contract. No implementation.
 
@@ -44,23 +44,23 @@ interface AuthorRepository {
 
 Single method. Case-insensitive matching is the repository's responsibility since it owns data access.
 
-### Step 4 — Mappers (`src/mappers/author-mapper.ts`)
+### Step 4 — Mappers (`src/infrastructure/mappers/author-mapper.ts`)
 
 **`toAuthor`** — casts a raw dataset entry to the domain `Author` type. Since the domain mirrors the dataset shape, this is a type-level assertion only.
 
-### Step 5 — Infrastructure: `FileAuthorRepository` (`src/infrastructure/file-author-repository.ts`)
+### Step 5 — Infrastructure: `FileAuthorRepository` (`src/infrastructure/repositories/file-author-repository.ts`)
 
 - Imports the raw dataset from `../../authors- JM.js` (using `createRequire` or a typed import).
 - On construction, maps all raw entries to domain `Author` objects using `toAuthor`.
 - `findByName(name)`: compares `name.toLowerCase().trim()` against stored `entry.author.toLowerCase()`. Returns first match or `undefined`.
 
-### Step 6 — Infrastructure: `InMemoryAuthorRepository` (`src/infrastructure/in-memory-author-repository.ts`)
+### Step 6 — Infrastructure: `InMemoryAuthorRepository` (`src/infrastructure/repositories/in-memory-author-repository.ts`)
 
 - Constructor accepts `Author[]`.
 - `findByName(name)`: same case-insensitive lookup as `FileAuthorRepository`.
 - Used exclusively in tests — allows injecting controlled data.
 
-### Step 7 — Use case (`src/use-cases/find-author.ts`)
+### Step 7 — Use case (`src/application/use-cases/find-author.ts`)
 
 ```ts
 class FindAuthorUseCase {
@@ -73,7 +73,7 @@ class FindAuthorUseCase {
 
 Pure orchestration. Takes a repository via constructor injection. Returns domain `Author` or `undefined`.
 
-### Step 8 — Controller (`src/controllers/author-controller.ts`)
+### Step 8 — Controller (`src/infrastructure/controllers/author-controller.ts`)
 
 - Receives `FindAuthorUseCase` via constructor injection.
 - Exposes a `handle(req, res)` method compatible with Express route handlers.

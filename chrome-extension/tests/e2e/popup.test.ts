@@ -3,6 +3,7 @@ import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { app } from "../../../local-api/src/app";
 import App from "../../src/App.vue";
+import { useLookupStore } from "../../src/stores/lookup-store";
 
 let server: Server;
 let apiPort: number;
@@ -57,8 +58,8 @@ const stubChrome = (url: string, scrapedAuthor: string | null = "Albert Einstein
   });
 };
 
-vi.mock("../../src/services/author-api", async (importOriginal) => {
-  const original = await importOriginal<typeof import("../../src/services/author-api")>();
+vi.mock("../../src/gateways/author-gateway", async (importOriginal) => {
+  const original = await importOriginal<typeof import("../../src/gateways/author-gateway")>();
   return {
     ...original,
     fetchAuthorData: async (authorName: string) => {
@@ -80,6 +81,7 @@ vi.mock("../../src/services/author-api", async (importOriginal) => {
 
 describe("popup e2e", () => {
   afterEach(() => {
+    useLookupStore().$reset();
     vi.restoreAllMocks();
   });
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import type { Author } from "@/domain/author";
-import { InMemoryAuthorRepository } from "@/infrastructure/in-memory-author-repository";
-import { FindAuthorUseCase } from "@/use-cases/find-author";
+import { FindAuthorUseCase } from "@/application/use-cases/find-author";
+import type { Author } from "@/domain/entities/author";
+import { InMemoryAuthorRepository } from "@/infrastructure/repositories/in-memory-author-repository";
 
 const albertEinstein: Author = {
   author: "Albert Einstein",

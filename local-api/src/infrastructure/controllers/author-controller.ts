@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
-import type { FindAuthorUseCase } from "@/use-cases/find-author";
+import type { FindAuthorUseCase } from "@/application/use-cases/find-author";
+import { env } from "@/env";
 
 const authorQuerySchema = z.object({
   author: z.string().min(1),
@@ -14,9 +15,8 @@ export class AuthorController {
   }
 
   handle = async (req: Request, res: Response): Promise<void> => {
-    const delayMs = Number(process.env.SIMULATED_DELAY_MS) || 0;
-    if (delayMs > 0) {
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    if (env.simulatedDelayMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, env.simulatedDelayMs));
     }
 
     const result = authorQuerySchema.safeParse(req.query);

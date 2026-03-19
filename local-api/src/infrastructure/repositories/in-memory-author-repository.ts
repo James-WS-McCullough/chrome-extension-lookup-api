@@ -1,5 +1,5 @@
-import type { Author } from "@/domain/author";
-import type { AuthorRepository } from "@/repositories/author-repository";
+import type { Author } from "@/domain/entities/author";
+import type { AuthorRepository } from "@/domain/repositories/author-repository";
 
 export class InMemoryAuthorRepository implements AuthorRepository {
   private readonly authors: Author[];
